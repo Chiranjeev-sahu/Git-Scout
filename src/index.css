@@ -1,9 +1,9 @@
 @font-face {
   font-family: sentient;
-  src: url("../src/assets/fonts/Sentient-Regular.woff2");
+  src: url('../src/assets/fonts/Sentient-Regular.woff2');
 }
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -46,26 +46,44 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-sentient:sentient,"sans-serif";
+  /* Tambo Specific Variables needed for tambo components */
+  --color-container: var(--container);
+  --color-backdrop: var(--backdrop);
+  --color-muted-backdrop: var(--muted-backdrop);
+
+  --font-sentient: sentient, 'sans-serif';
   --animate-line-shadow: line-shadow 20s linear infinite;
   @keyframes line-shadow {
-  0% {
-    background-position: 0 0;
+    0% {
+      background-position: 0 0;
     }
-  100% {
-    background-position: 100% -100%;
+    100% {
+      background-position: 100% -100%;
     }
   }
-  --animate-shiny-text: shiny-text 8s infinite
-;
+  --animate-shiny-text: shiny-text 8s infinite;
   @keyframes shiny-text {
-  0%, 90%, 100% {
-    background-position: calc(-100% - var(--shiny-width)) 0;
+    0%,
+    90%,
+    100% {
+      background-position: calc(-100% - var(--shiny-width)) 0;
     }
-  30%, 60% {
-    background-position: calc(100% + var(--shiny-width)) 0;
+    30%,
+    60% {
+      background-position: calc(100% + var(--shiny-width)) 0;
     }
-  }}
+  }
+
+  --animate-thinking-gradient: thinking-gradient 2s linear infinite;
+  @keyframes thinking-gradient {
+    0% {
+      background-position: -200% center;
+    }
+    100% {
+      background-position: 200% center;
+    }
+  }
+}
 
 :root {
   --radius: 0.625rem;
@@ -100,6 +118,12 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-width: 3rem;
+  --container: oklch(0.98 0 247);
+  --backdrop: oklch(0.25 0.07 252 / 0.25);
+  --muted-backdrop: oklch(0.25 0.07 252 / 0.1);
+  --panel-left-width: 500px;
+  --panel-right-width: 500px;
 }
 
 .dark {
@@ -134,6 +158,12 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-width: 3rem;
+  --container: oklch(0.22 0 0);
+  --backdrop: oklch(0.85 0 0 / 0.15);
+  --muted-backdrop: oklch(0.85 0 0 / 0.08);
+  --panel-left-width: 500px;
+  --panel-right-width: 500px;
 }
 
 @layer base {
@@ -142,6 +172,37 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sentient);
+  }
+}
+
+@utility animate-thinking-gradient {
+  /* Light mode gradient - dark text shimmer */
+  background: linear-gradient(
+    90deg,
+    oklch(0.4 0 0) 0%,
+    oklch(0.7 0 0) 50%,
+    oklch(0.4 0 0) 100%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: thinking-gradient 2s linear infinite;
+
+  .dark & {
+    /* Dark mode gradient - light text shimmer */
+    background: linear-gradient(
+      90deg,
+      oklch(0.6 0 0) 0%,
+      oklch(0.9 0 0) 50%,
+      oklch(0.6 0 0) 100%
+    );
+    background-size: 200% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: thinking-gradient 2s linear infinite;
   }
 }
 
@@ -159,22 +220,22 @@
     background-color: transparent;
   }
   .scrollbar-thumb-zinc-200::-webkit-scrollbar {
-      width: 2px;
+    width: 2px;
   }
-  
+
   /* Fallback for Webkit */
   ::-webkit-scrollbar {
     width: 3px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: transparent; 
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #e4e4e7; 
+    background: #e4e4e7;
     border-radius: 1px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #d4d4d8; 
+    background: #d4d4d8;
   }
 }
