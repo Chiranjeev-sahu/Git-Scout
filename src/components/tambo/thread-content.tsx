@@ -1,4 +1,9 @@
-"use client";
+'use client';
+
+import * as React from 'react';
+
+import { type TamboThreadMessage, useTambo } from '@tambo-ai/react';
+import { type VariantProps } from 'class-variance-authority';
 
 import {
   Message,
@@ -8,11 +13,8 @@ import {
   ReasoningInfo,
   ToolcallInfo,
   type messageVariants,
-} from "@/components/tambo/message";
-import { cn } from "@/lib/utils";
-import { type TamboThreadMessage, useTambo } from "@tambo-ai/react";
-import { type VariantProps } from "class-variance-authority";
-import * as React from "react";
+} from '@/components/tambo/message';
+import { cn } from '@/lib/utils';
 
 /**
  * @typedef ThreadContentContextValue
@@ -25,7 +27,7 @@ interface ThreadContentContextValue {
   messages: TamboThreadMessage[];
   isGenerating: boolean;
   generationStage?: string;
-  variant?: VariantProps<typeof messageVariants>["variant"];
+  variant?: VariantProps<typeof messageVariants>['variant'];
 }
 
 /**
@@ -45,7 +47,7 @@ const useThreadContentContext = () => {
   const context = React.useContext(ThreadContentContext);
   if (!context) {
     throw new Error(
-      "ThreadContent sub-components must be used within a ThreadContent",
+      'ThreadContent sub-components must be used within a ThreadContent'
     );
   }
   return context;
@@ -57,7 +59,7 @@ const useThreadContentContext = () => {
  */
 export interface ThreadContentProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Optional styling variant for the message container */
-  variant?: VariantProps<typeof messageVariants>["variant"];
+  variant?: VariantProps<typeof messageVariants>['variant'];
   /** The child elements to render within the container. */
   children?: React.ReactNode;
 }
@@ -85,14 +87,14 @@ const ThreadContent = React.forwardRef<HTMLDivElement, ThreadContentProps>(
         generationStage,
         variant,
       }),
-      [thread?.messages, isGenerating, generationStage, variant],
+      [thread?.messages, isGenerating, generationStage, variant]
     );
 
     return (
       <ThreadContentContext.Provider value={contextValue}>
         <div
           ref={ref}
-          className={cn("w-full", className)}
+          className={cn('w-full', className)}
           data-slot="thread-content-container"
           {...props}
         >
@@ -100,9 +102,9 @@ const ThreadContent = React.forwardRef<HTMLDivElement, ThreadContentProps>(
         </div>
       </ThreadContentContext.Provider>
     );
-  },
+  }
 );
-ThreadContent.displayName = "ThreadContent";
+ThreadContent.displayName = 'ThreadContent';
 
 /**
  * Props for the ThreadContentMessages component.
@@ -128,13 +130,13 @@ const ThreadContentMessages = React.forwardRef<
   const { messages, isGenerating, variant } = useThreadContentContext();
 
   const filteredMessages = messages.filter(
-    (message) => message.role !== "system" && !message.parentMessageId,
+    (message) => message.role !== 'system' && !message.parentMessageId
   );
 
   return (
     <div
       ref={ref}
-      className={cn("flex flex-col gap-2", className)}
+      className={cn('flex flex-col gap-2', className)}
       data-slot="thread-content-messages"
       {...props}
     >
@@ -148,28 +150,28 @@ const ThreadContentMessages = React.forwardRef<
             data-slot="thread-content-item"
           >
             <Message
-              role={message.role === "assistant" ? "assistant" : "user"}
+              role={message.role === 'assistant' ? 'assistant' : 'user'}
               message={message}
               variant={variant}
               isLoading={isGenerating && index === filteredMessages.length - 1}
               className={cn(
-                "flex w-full",
-                message.role === "assistant" ? "justify-start" : "justify-end",
+                'flex w-full',
+                message.role === 'assistant' ? 'justify-start' : 'justify-end'
               )}
             >
               <div
                 className={cn(
-                  "flex flex-col",
-                  message.role === "assistant" ? "w-full" : "max-w-3xl",
+                  'flex flex-col',
+                  message.role === 'assistant' ? 'w-full' : 'max-w-3xl'
                 )}
               >
                 <ReasoningInfo />
                 <MessageImages />
                 <MessageContent
                   className={
-                    message.role === "assistant"
-                      ? "text-foreground font-sans"
-                      : "text-foreground bg-container hover:bg-backdrop font-sans"
+                    message.role === 'assistant'
+                      ? 'text-slate-700 font-medium tracking-tight'
+                      : 'text-slate-800 bg-zinc-900 shadow-md border border-zinc-800 font-medium'
                   }
                 />
                 <ToolcallInfo />
@@ -182,6 +184,6 @@ const ThreadContentMessages = React.forwardRef<
     </div>
   );
 });
-ThreadContentMessages.displayName = "ThreadContent.Messages";
+ThreadContentMessages.displayName = 'ThreadContent.Messages';
 
 export { ThreadContent, ThreadContentMessages };

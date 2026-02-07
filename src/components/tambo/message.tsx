@@ -1,34 +1,37 @@
-"use client";
+'use client';
 
-import { TamboThreadMessage, useTambo } from "@tambo-ai/react";
-import { cn } from "@/lib/utils";
-import { cva, type VariantProps } from "class-variance-authority";
-import { Check, ChevronDown, ExternalLink, Loader2, X } from "lucide-react";
-import * as React from "react";
-import { Streamdown } from "streamdown";
+import * as React from 'react';
+
+import { TamboThreadMessage, useTambo } from '@tambo-ai/react';
+import { type VariantProps, cva } from 'class-variance-authority';
+import { Check, ChevronDown, ExternalLink, Loader2, X } from 'lucide-react';
+import { Streamdown } from 'streamdown';
+
 import {
   Message as MessageBase,
   MessageContentProps as MessageBaseContentProps,
   MessageContentRenderProps as MessageBaseContentRenderProps,
   MessageImagesProps as MessageBaseImagesProps,
   MessageRenderedComponentProps as MessageBaseRenderedComponentProps,
-} from "@/components/tambo/base/message";
-import { MessageLoadingIndicatorProps } from "@/components/tambo/base/message/loading-indicator/message-loading-indicator";
-import { MessageRootProps } from "@/components/tambo/base/message/root/message-root";
-import { useMessageRootContext } from "@/components/tambo/base/message/root/message-root-context";
+} from '@/components/tambo/base/message';
+import { MessageLoadingIndicatorProps } from '@/components/tambo/base/message/loading-indicator/message-loading-indicator';
+import { MessageRootProps } from '@/components/tambo/base/message/root/message-root';
+import { useMessageRootContext } from '@/components/tambo/base/message/root/message-root-context';
 import {
   ReasoningInfo as ReasoningInfoBase,
   ReasoningInfoRootProps,
-} from "@/components/tambo/base/reasoning-info";
+} from '@/components/tambo/base/reasoning-info';
 import {
   ToolcallInfo as ToolcallInfoBase,
   type ToolcallInfoRootProps as ToolcallInfoBaseRootProps,
-} from "@/components/tambo/base/toolcall-info";
-import { getSafeContent } from "../../lib/thread-hooks";
+} from '@/components/tambo/base/toolcall-info';
+import { cn } from '@/lib/utils';
+
+import { getSafeContent } from '../../lib/thread-hooks';
 import {
   createMarkdownComponents,
   markdownComponents,
-} from "./markdown-components";
+} from './markdown-components';
 
 /**
  * CSS variants for the message container
@@ -36,21 +39,21 @@ import {
  * @property {string} default - Default styling
  * @property {string} solid - Solid styling with shadow effects
  */
-const messageVariants = cva("flex", {
+const messageVariants = cva('flex', {
   variants: {
     variant: {
-      default: "",
+      default: '',
       solid: [
-        "[&>div>div:first-child]:shadow-md",
-        "[&>div>div:first-child]:bg-container/50",
-        "[&>div>div:first-child]:hover:bg-container",
-        "[&>div>div:first-child]:transition-all",
-        "[&>div>div:first-child]:duration-200",
-      ].join(" "),
+        '[&>div>div:first-child]:shadow-md',
+        '[&>div>div:first-child]:bg-container/50',
+        '[&>div>div:first-child]:hover:bg-container',
+        '[&>div>div:first-child]:transition-all',
+        '[&>div>div:first-child]:duration-200',
+      ].join(' '),
     },
   },
   defaultVariants: {
-    variant: "default",
+    variant: 'default',
   },
 });
 
@@ -59,7 +62,7 @@ const messageVariants = cva("flex", {
  */
 export interface MessageProps extends MessageRootProps {
   /** Optional styling variant for the message container. */
-  variant?: VariantProps<typeof messageVariants>["variant"];
+  variant?: VariantProps<typeof messageVariants>['variant'];
 }
 
 /**
@@ -81,8 +84,8 @@ const Message = React.forwardRef<HTMLDivElement, MessageProps>(
         ref={ref}
         className={cn(
           messageVariants({ variant }),
-          "data-[message-role=assistant]:w-full",
-          className,
+          'data-[message-role=assistant]:w-full',
+          className
         )}
         message={message}
         role={role}
@@ -91,9 +94,9 @@ const Message = React.forwardRef<HTMLDivElement, MessageProps>(
         {children}
       </MessageBase.Root>
     );
-  },
+  }
 );
-Message.displayName = "Message";
+Message.displayName = 'Message';
 
 /**
  * Loading indicator with bouncing dots animation.
@@ -114,19 +117,19 @@ const LoadingIndicator: React.FC<MessageLoadingIndicatorProps> = ({
     <MessageBase.LoadingIndicator
       className={cn(
         [
-          "flex items-center gap-1",
-          "*:data-dot:h-1 *:data-dot:w-1 *:data-dot:bg-current *:data-dot:rounded-full *:data-dot:animate-bounce",
-          "*:data-[dot=1]:[animation-delay:-0.3s]",
-          "*:data-[dot=2]:[animation-delay:-0.2s]",
-          "*:data-[dot=3]:[animation-delay:-0.1s]",
+          'flex items-center gap-1',
+          '*:data-dot:h-1 *:data-dot:w-1 *:data-dot:bg-current *:data-dot:rounded-full *:data-dot:animate-bounce',
+          '*:data-[dot=1]:[animation-delay:-0.3s]',
+          '*:data-[dot=2]:[animation-delay:-0.2s]',
+          '*:data-[dot=3]:[animation-delay:-0.1s]',
         ],
-        className,
+        className
       )}
       {...props}
     />
   );
 };
-LoadingIndicator.displayName = "LoadingIndicator";
+LoadingIndicator.displayName = 'LoadingIndicator';
 
 /**
  * Internal component to render message content based on its type
@@ -159,7 +162,7 @@ function MessageContentRenderer({
  */
 export type MessageImagesProps = Omit<
   MessageBaseImagesProps,
-  "renderImage" | "children"
+  'renderImage' | 'children'
 >;
 
 /**
@@ -171,7 +174,7 @@ const MessageImages = React.forwardRef<HTMLDivElement, MessageImagesProps>(
     return (
       <MessageBase.Images
         ref={ref}
-        className={cn("flex flex-wrap gap-2 mb-2", className)}
+        className={cn('flex flex-wrap gap-2 mb-2', className)}
         renderImage={({ url, index }) => (
           <div
             key={index}
@@ -191,14 +194,14 @@ const MessageImages = React.forwardRef<HTMLDivElement, MessageImagesProps>(
         {...props}
       />
     );
-  },
+  }
 );
-MessageImages.displayName = "MessageImages";
+MessageImages.displayName = 'MessageImages';
 
 /**
  * Props for the MessageContent component.
  */
-export type MessageContentProps = Omit<MessageBaseContentProps, "children">;
+export type MessageContentProps = Omit<MessageBaseContentProps, 'children'>;
 
 /**
  * Displays the message content with optional markdown formatting.
@@ -211,8 +214,8 @@ const MessageContent = React.forwardRef<HTMLDivElement, MessageContentProps>(
       <MessageBase.Content
         ref={ref}
         className={cn(
-          "relative block rounded-3xl px-4 py-2 text-[15px] leading-relaxed transition-all duration-200 font-medium max-w-full [&_p]:py-1 [&_li]:list-item",
-          className,
+          'relative block rounded-sm px-4 py-2 text-[15px] leading-relaxed transition-all duration-200 font-medium max-w-full [&_p]:py-1 [&_li]:list-item',
+          className
         )}
         content={content}
         markdown={markdown}
@@ -238,8 +241,8 @@ const MessageContent = React.forwardRef<HTMLDivElement, MessageContentProps>(
           return (
             <div
               className={cn(
-                "wrap-break-word",
-                !markdown && "whitespace-pre-wrap",
+                'wrap-break-word',
+                !markdown && 'whitespace-pre-wrap'
               )}
               data-slot="message-content-text"
             >
@@ -257,31 +260,31 @@ const MessageContent = React.forwardRef<HTMLDivElement, MessageContentProps>(
         {...props}
       />
     );
-  },
+  }
 );
-MessageContent.displayName = "MessageContent";
+MessageContent.displayName = 'MessageContent';
 
 /**
  * Props for the ToolcallInfo component.
  */
 export interface ToolcallInfoProps extends Omit<
   ToolcallInfoBaseRootProps,
-  "children" | "message"
+  'children' | 'message'
 > {
   /** Optional flag to render response content as Markdown. Default is true. */
   markdown?: boolean;
 }
 
-const toolStatusIconClassName = cva("h-3 w-3 text-bold", {
+const toolStatusIconClassName = cva('h-3 w-3 text-bold', {
   variants: {
     status: {
-      error: "text-red-500",
-      loading: "text-muted-foreground animate-spin",
-      success: "text-green-500",
+      error: 'text-red-500',
+      loading: 'text-muted-foreground animate-spin',
+      success: 'text-green-500',
     },
   },
   defaultVariants: {
-    status: "success",
+    status: 'success',
   },
 });
 
@@ -290,8 +293,8 @@ function ToolcallStatusIcon() {
     <ToolcallInfoBase.StatusIcon
       render={({ status }) => {
         let Icon = Check;
-        if (status === "error") Icon = X;
-        if (status === "loading") Icon = Loader2;
+        if (status === 'error') Icon = X;
+        if (status === 'loading') Icon = Loader2;
         return <Icon className={toolStatusIconClassName({ status })} />;
       }}
     />
@@ -303,7 +306,7 @@ function ToolResultDisplay({
   hasResult,
   enableMarkdown,
 }: {
-  content: TamboThreadMessage["content"] | null;
+  content: TamboThreadMessage['content'] | null;
   hasResult: boolean;
   enableMarkdown: boolean;
 }) {
@@ -329,9 +332,9 @@ function ToolcallInfoContent({
     <ToolcallInfoBase.Content
       forceMount
       className={cn(
-        "flex flex-col gap-1 p-3 pl-7 overflow-auto transition-[max-height,opacity,padding] duration-300 w-full truncate",
-        "data-[state=open]:max-h-auto data-[state=open]:opacity-100",
-        "data-[state=closed]:max-h-0 data-[state=closed]:opacity-0 data-[state=closed]:p-0",
+        'flex flex-col gap-1 p-3 pl-7 overflow-auto transition-[max-height,opacity,padding] duration-300 w-full truncate',
+        'data-[state=open]:max-h-auto data-[state=open]:opacity-100',
+        'data-[state=closed]:max-h-0 data-[state=closed]:opacity-0 data-[state=closed]:p-0'
       )}
     >
       <ToolcallInfoBase.ToolName
@@ -372,8 +375,8 @@ const ToolcallInfoTrigger = React.forwardRef<
     <ToolcallInfoBase.Trigger
       ref={ref}
       className={cn(
-        "group/trigger flex items-center gap-1 cursor-pointer hover:bg-muted rounded-md p-1 select-none w-fit",
-        className,
+        'group/trigger flex items-center gap-1 cursor-pointer hover:bg-muted rounded-md p-1 select-none w-fit',
+        className
       )}
       {...props}
     >
@@ -381,7 +384,7 @@ const ToolcallInfoTrigger = React.forwardRef<
     </ToolcallInfoBase.Trigger>
   );
 });
-ToolcallInfoTrigger.displayName = "ToolcallInfoTrigger";
+ToolcallInfoTrigger.displayName = 'ToolcallInfoTrigger';
 
 /**
  * Displays tool call information in a collapsible dropdown.
@@ -396,8 +399,8 @@ const ToolcallInfo = React.forwardRef<HTMLDivElement, ToolcallInfoProps>(
         ref={ref}
         message={message}
         className={cn(
-          "flex flex-col items-start text-xs opacity-50",
-          className,
+          'flex flex-col items-start text-xs opacity-50',
+          className
         )}
         {...props}
       >
@@ -411,16 +414,16 @@ const ToolcallInfo = React.forwardRef<HTMLDivElement, ToolcallInfoProps>(
         </div>
       </ToolcallInfoBase.Root>
     );
-  },
+  }
 );
-ToolcallInfo.displayName = "ToolcallInfo";
+ToolcallInfo.displayName = 'ToolcallInfo';
 /**
  * Displays a message's child messages in a collapsible dropdown.
  * Used for MCP sampling sub-threads.
  */
 const SamplingSubThread = ({
   parentMessageId,
-  titleText = "finished additional work",
+  titleText = 'finished additional work',
 }: {
   parentMessageId: string;
   titleText?: string;
@@ -431,7 +434,7 @@ const SamplingSubThread = ({
 
   const childMessages = React.useMemo(() => {
     return thread?.messages?.filter(
-      (m: TamboThreadMessage) => m.parentMessageId === parentMessageId,
+      (m: TamboThreadMessage) => m.parentMessageId === parentMessageId
     );
   }, [thread?.messages, parentMessageId]);
 
@@ -445,36 +448,36 @@ const SamplingSubThread = ({
         aria-controls={samplingDetailsId}
         onClick={() => setIsExpanded(!isExpanded)}
         className={cn(
-          "flex items-center gap-1 cursor-pointer hover:bg-muted-foreground/10 rounded-md p-2 select-none w-fit",
+          'flex items-center gap-1 cursor-pointer hover:bg-muted-foreground/10 rounded-md p-2 select-none w-fit'
         )}
       >
         <span>{titleText}</span>
         <ChevronDown
           className={cn(
-            "w-3 h-3 transition-transform duration-200",
-            !isExpanded && "-rotate-90",
+            'w-3 h-3 transition-transform duration-200',
+            !isExpanded && '-rotate-90'
           )}
         />
       </button>
       <div
         id={samplingDetailsId}
         className={cn(
-          "transition-[max-height,opacity] duration-300",
+          'transition-[max-height,opacity] duration-300',
           isExpanded
-            ? "max-h-96 opacity-100 overflow-auto"
-            : "max-h-0 opacity-0 overflow-hidden",
+            ? 'max-h-96 opacity-100 overflow-auto'
+            : 'max-h-0 opacity-0 overflow-hidden'
         )}
         aria-hidden={!isExpanded}
       >
         <div className="pl-2">
           <div className="border-l-2 border-muted-foreground p-2 flex flex-col gap-4">
             {childMessages?.map((m: TamboThreadMessage) => (
-              <div key={m.id} className={`${m.role === "user" && "pl-2"}`}>
+              <div key={m.id} className={`${m.role === 'user' && 'pl-2'}`}>
                 <span
                   className={cn(
-                    "whitespace-pre-wrap",
-                    m.role === "assistant" &&
-                      "bg-muted/50 rounded-md p-2 inline-block w-fit",
+                    'whitespace-pre-wrap',
+                    m.role === 'assistant' &&
+                      'bg-muted/50 rounded-md p-2 inline-block w-fit'
                   )}
                 >
                   {getSafeContent(m.content)}
@@ -487,14 +490,14 @@ const SamplingSubThread = ({
     </div>
   );
 };
-SamplingSubThread.displayName = "SamplingSubThread";
+SamplingSubThread.displayName = 'SamplingSubThread';
 
 /**
  * Props for the ReasoningInfo component.
  */
 export type ReasoningInfoProps = Omit<
   ReasoningInfoRootProps,
-  "children" | "message"
+  'children' | 'message'
 >;
 
 /**
@@ -509,8 +512,8 @@ const ReasoningInfo = React.forwardRef<HTMLDivElement, ReasoningInfoProps>(
       <ReasoningInfoBase.Root
         ref={ref}
         className={cn(
-          "flex flex-col items-start text-xs opacity-50",
-          className,
+          'flex flex-col items-start text-xs opacity-50',
+          className
         )}
         isLoading={isLoading}
         message={message}
@@ -519,20 +522,20 @@ const ReasoningInfo = React.forwardRef<HTMLDivElement, ReasoningInfoProps>(
         <div className="flex flex-col w-full">
           <ReasoningInfoBase.Trigger
             className={
-              "group/trigger flex items-center gap-1 cursor-pointer hover:bg-muted-foreground/10 rounded-md px-3 py-1 select-none w-fit"
+              'group/trigger flex items-center gap-1 cursor-pointer hover:bg-muted-foreground/10 rounded-md px-3 py-1 select-none w-fit'
             }
           >
             <ReasoningInfoBase.StatusText
-              className={"data-loading:animate-thinking-gradient"}
+              className={'data-loading:animate-thinking-gradient'}
             />
             <ChevronDown className="h-3 w-3 transition-transform duration-200 group-data-[state=closed]/trigger:-rotate-90" />
           </ReasoningInfoBase.Trigger>
           <ReasoningInfoBase.Content
             forceMount
             className={cn(
-              "flex flex-col gap-1 px-3 py-3 overflow-auto transition-[max-height,opacity,padding] duration-300 w-full",
-              "data-[state=open]:max-h-96 data-[state=open]:opacity-100",
-              "data-[state=closed]:max-h-0 data-[state=closed]:opacity-0 data-[state=closed]:p-0",
+              'flex flex-col gap-1 px-3 py-3 overflow-auto transition-[max-height,opacity,padding] duration-300 w-full',
+              'data-[state=open]:max-h-96 data-[state=open]:opacity-100',
+              'data-[state=closed]:max-h-0 data-[state=closed]:opacity-0 data-[state=closed]:p-0'
             )}
           >
             <ReasoningInfoBase.Steps
@@ -562,9 +565,9 @@ const ReasoningInfo = React.forwardRef<HTMLDivElement, ReasoningInfoProps>(
         </div>
       </ReasoningInfoBase.Root>
     );
-  },
+  }
 );
-ReasoningInfo.displayName = "ReasoningInfo";
+ReasoningInfo.displayName = 'ReasoningInfo';
 
 /**
  * Renders an image from a tool result.
@@ -600,7 +603,7 @@ interface ToolResultResourceProps {
  */
 function ToolResultResource({ resource, index }: ToolResultResourceProps) {
   // Handle blob content (e.g., base64-encoded images)
-  if (resource.blob && resource.mimeType?.startsWith("image/")) {
+  if (resource.blob && resource.mimeType?.startsWith('image/')) {
     const dataUrl = `data:${resource.mimeType};base64,${resource.blob}`;
     return (
       <div className="rounded-md overflow-hidden shadow-sm max-w-xs">
@@ -621,7 +624,7 @@ function ToolResultResource({ resource, index }: ToolResultResourceProps) {
       <div className="whitespace-pre-wrap">
         {resource.name && (
           <span className="font-medium text-muted-foreground">
-            {resource.name}:{" "}
+            {resource.name}:{' '}
           </span>
         )}
         {resource.text}
@@ -634,7 +637,7 @@ function ToolResultResource({ resource, index }: ToolResultResourceProps) {
     return (
       <div className="flex items-center gap-1">
         <span className="font-medium text-muted-foreground">
-          {resource.name ?? "Resource"}:
+          {resource.name ?? 'Resource'}:
         </span>
         <span className="font-mono text-xs truncate">{resource.uri}</span>
       </div>
@@ -652,13 +655,13 @@ function ToolResultContent({
   content,
   enableMarkdown = true,
 }: {
-  content: TamboThreadMessage["content"];
+  content: TamboThreadMessage['content'];
   enableMarkdown?: boolean;
 }) {
   if (!content) return null;
 
   // Handle string content directly
-  if (typeof content === "string") {
+  if (typeof content === 'string') {
     return <ToolResultText text={content} enableMarkdown={enableMarkdown} />;
   }
 
@@ -666,25 +669,25 @@ function ToolResultContent({
   if (Array.isArray(content)) {
     const textParts: string[] = [];
     const nonTextItems: Array<{
-      type: "image" | "resource";
+      type: 'image' | 'resource';
       url?: string;
-      resource?: ToolResultResourceProps["resource"];
+      resource?: ToolResultResourceProps['resource'];
       index: number;
     }> = [];
 
     content.forEach((item, index) => {
       if (!item?.type) return;
 
-      if (item.type === "text" && item.text) {
+      if (item.type === 'text' && item.text) {
         textParts.push(item.text);
-      } else if (item.type === "image_url" && item.image_url?.url) {
-        nonTextItems.push({ type: "image", url: item.image_url.url, index });
-      } else if (item.type === "resource" && item.resource) {
-        nonTextItems.push({ type: "resource", resource: item.resource, index });
+      } else if (item.type === 'image_url' && item.image_url?.url) {
+        nonTextItems.push({ type: 'image', url: item.image_url.url, index });
+      } else if (item.type === 'resource' && item.resource) {
+        nonTextItems.push({ type: 'resource', resource: item.resource, index });
       }
     });
 
-    const combinedText = textParts.join("");
+    const combinedText = textParts.join('');
 
     // If we only have text, return it directly
     if (nonTextItems.length === 0) {
@@ -702,7 +705,7 @@ function ToolResultContent({
         <div className="flex flex-wrap gap-2">
           {nonTextItems.map((item) => {
             switch (item.type) {
-              case "image":
+              case 'image':
                 return item.url ? (
                   <ToolResultImage
                     key={`image-${item.index}`}
@@ -710,7 +713,7 @@ function ToolResultContent({
                     index={item.index}
                   />
                 ) : null;
-              case "resource":
+              case 'resource':
                 return item.resource ? (
                   <ToolResultResource
                     key={`resource-${item.index}`}
@@ -746,7 +749,7 @@ function ToolResultText({
     return (
       <pre
         className={cn(
-          "bg-muted/50 rounded-md p-3 text-xs overflow-x-auto overflow-y-auto max-w-full max-h-64",
+          'bg-muted/50 rounded-md p-3 text-xs overflow-x-auto overflow-y-auto max-w-full max-h-64'
         )}
       >
         <code className="font-mono wrap-break-word whitespace-pre-wrap">
@@ -766,7 +769,7 @@ function ToolResultText({
  */
 export type MessageRenderedComponentAreaProps = Omit<
   MessageBaseRenderedComponentProps,
-  "children"
+  'children'
 >;
 
 /**
@@ -794,7 +797,7 @@ const MessageRenderedComponentArea = React.forwardRef<
     </MessageBase.RenderedComponent>
   );
 });
-MessageRenderedComponentArea.displayName = "Message.RenderedComponentArea";
+MessageRenderedComponentArea.displayName = 'Message.RenderedComponentArea';
 
 export {
   createMarkdownComponents,

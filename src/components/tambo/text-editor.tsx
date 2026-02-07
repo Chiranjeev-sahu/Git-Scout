@@ -1,24 +1,26 @@
-"use client";
+'use client';
 
-import * as Popover from "@radix-ui/react-popover";
-import { cn } from "@/lib/utils";
-import Document from "@tiptap/extension-document";
-import HardBreak from "@tiptap/extension-hard-break";
-import Mention from "@tiptap/extension-mention";
-import Paragraph from "@tiptap/extension-paragraph";
-import Placeholder from "@tiptap/extension-placeholder";
-import Text from "@tiptap/extension-text";
+import * as React from 'react';
+import { useImperativeHandle, useState } from 'react';
+
+import * as Popover from '@radix-ui/react-popover';
+import Document from '@tiptap/extension-document';
+import HardBreak from '@tiptap/extension-hard-break';
+import Mention from '@tiptap/extension-mention';
+import Paragraph from '@tiptap/extension-paragraph';
+import Placeholder from '@tiptap/extension-placeholder';
+import Text from '@tiptap/extension-text';
 import {
+  type Editor,
   EditorContent,
   Extension,
   useEditor,
-  type Editor,
-} from "@tiptap/react";
-import type { SuggestionOptions } from "@tiptap/suggestion";
-import Suggestion from "@tiptap/suggestion";
-import { Cuboid, FileText } from "lucide-react";
-import * as React from "react";
-import { useImperativeHandle, useState } from "react";
+} from '@tiptap/react';
+import type { SuggestionOptions } from '@tiptap/suggestion';
+import Suggestion from '@tiptap/suggestion';
+import { Cuboid, FileText } from 'lucide-react';
+
+import { cn } from '@/lib/utils';
 
 /**
  * Result of extracting images from clipboard data.
@@ -34,13 +36,13 @@ export interface ImageItems {
  * @returns Object containing extracted images array and whether text was present
  */
 export function getImageItems(
-  clipboardData: DataTransfer | null | undefined,
+  clipboardData: DataTransfer | null | undefined
 ): ImageItems {
   const items = Array.from(clipboardData?.items ?? []);
   const imageItems: File[] = [];
 
   for (const item of items) {
-    if (!item.type.startsWith("image/")) {
+    if (!item.type.startsWith('image/')) {
       continue;
     }
 
@@ -50,7 +52,7 @@ export function getImageItems(
     }
   }
 
-  const text = clipboardData?.getData("text/plain") ?? "";
+  const text = clipboardData?.getData('text/plain') ?? '';
 
   return {
     imageItems,
@@ -64,7 +66,7 @@ export function getImageItems(
  */
 export interface TamboEditor {
   /** Focus the editor at a specific position */
-  focus(position?: "start" | "end"): void;
+  focus(position?: 'start' | 'end'): void;
   /** Set the editor content */
   setContent(content: string): void;
   /** Append text to the end of the editor content */
@@ -114,7 +116,7 @@ export interface TextEditorProps {
   onResourceNamesChange: (
     resourceNames:
       | Record<string, string>
-      | ((prev: Record<string, string>) => Record<string, string>),
+      | ((prev: Record<string, string>) => Record<string, string>)
   ) => void;
   onKeyDown?: (event: React.KeyboardEvent) => void;
   placeholder?: string;
@@ -162,7 +164,7 @@ interface SuggestionRef<T extends SuggestionItem> {
  * Includes line height for proper spacing when popup flips above cursor.
  */
 function getPositionFromClientRect(
-  clientRect?: (() => DOMRect | null) | null,
+  clientRect?: (() => DOMRect | null) | null
 ): { top: number; left: number; lineHeight: number } | null {
   if (!clientRect) return null;
   const rect = clientRect();
@@ -205,12 +207,12 @@ function SuggestionPopover<T extends SuggestionItem>({
       <Popover.Anchor asChild>
         <div
           style={{
-            position: "fixed",
+            position: 'fixed',
             top: `${state.position.top}px`,
             left: `${state.position.left}px`,
             width: 0,
             height: 0,
-            pointerEvents: "none",
+            pointerEvents: 'none',
           }}
         />
       </Popover.Anchor>
@@ -237,10 +239,10 @@ function SuggestionPopover<T extends SuggestionItem>({
                 key={item.id}
                 type="button"
                 className={cn(
-                  "flex items-start gap-2 px-2 py-2 text-sm rounded-md text-left",
-                  "hover:bg-accent hover:text-accent-foreground transition-colors",
+                  'flex items-start gap-2 px-2 py-2 text-sm rounded-md text-left',
+                  'hover:bg-accent hover:text-accent-foreground transition-colors',
                   index === state.selectedIndex &&
-                    "bg-accent text-accent-foreground",
+                    'bg-accent text-accent-foreground'
                 )}
                 onClick={() => state.command?.(item)}
               >
@@ -249,8 +251,8 @@ function SuggestionPopover<T extends SuggestionItem>({
                   <div className="font-medium truncate">{item.name}</div>
                   <div
                     className={cn(
-                      "text-xs text-muted-foreground truncate",
-                      monoSecondary && "font-mono",
+                      'text-xs text-muted-foreground truncate',
+                      monoSecondary && 'font-mono'
                     )}
                   >
                     {item.id}
@@ -272,7 +274,7 @@ function checkMentionExists(editor: Editor, label: string): boolean {
   if (!editor.state?.doc) return false;
   let exists = false;
   editor.state.doc.descendants((node) => {
-    if (node.type.name === "mention") {
+    if (node.type.name === 'mention') {
       const mentionLabel = node.attrs.label as string;
       if (mentionLabel === label) {
         exists = true;
@@ -291,10 +293,10 @@ function checkMentionExists(editor: Editor, label: string): boolean {
 function createResourceMentionConfig(
   onSearchChange: (query: string) => void,
   onSelect: (item: ResourceItem) => void,
-  stateRef: React.MutableRefObject<SuggestionRef<ResourceItem>>,
-): Omit<SuggestionOptions, "editor"> {
+  stateRef: React.MutableRefObject<SuggestionRef<ResourceItem>>
+): Omit<SuggestionOptions, 'editor'> {
   return {
-    char: "@",
+    char: '@',
     items: ({ query }) => {
       onSearchChange(query);
       return [];
@@ -304,7 +306,7 @@ function createResourceMentionConfig(
       const createWrapCommand =
         (
           editor: Editor,
-          tiptapCommand: (attrs: { id: string; label: string }) => void,
+          tiptapCommand: (attrs: { id: string; label: string }) => void
         ) =>
         (item: ResourceItem) => {
           if (checkMentionExists(editor, item.name)) return;
@@ -385,19 +387,19 @@ function createResourceMentionConfig(
 function createPromptCommandExtension(
   onSearchChange: (query: string) => void,
   onSelect: (item: PromptItem) => void,
-  stateRef: React.MutableRefObject<SuggestionRef<PromptItem>>,
+  stateRef: React.MutableRefObject<SuggestionRef<PromptItem>>
 ) {
   return Extension.create({
-    name: "promptCommand",
+    name: 'promptCommand',
 
     addProseMirrorPlugins() {
       return [
         Suggestion({
           editor: this.editor,
-          char: "/",
+          char: '/',
           items: ({ query, editor }) => {
             // Only show prompts when editor is empty (except for the "/" and query)
-            const editorValue = editor.getText().replace("/", "").trim();
+            const editorValue = editor.getText().replace('/', '').trim();
             if (editorValue.length > 0) {
               stateRef.current.setState({ isOpen: false });
               return [];
@@ -501,21 +503,21 @@ function getTextWithResourceURIs(editor: Editor | null): {
   text: string;
   resourceNames: Record<string, string>;
 } {
-  if (!editor?.state?.doc) return { text: "", resourceNames: {} };
+  if (!editor?.state?.doc) return { text: '', resourceNames: {} };
 
-  let text = "";
+  let text = '';
   const resourceNames: Record<string, string> = {};
 
   editor.state.doc.descendants((node) => {
-    if (node.type.name === "mention") {
-      const id = node.attrs.id ?? "";
-      const label = node.attrs.label ?? "";
+    if (node.type.name === 'mention') {
+      const id = node.attrs.id ?? '';
+      const label = node.attrs.label ?? '';
       text += `@${id}`;
       if (label && id) {
         resourceNames[id] = label;
       }
-    } else if (node.type.name === "hardBreak") {
-      text += "\n";
+    } else if (node.type.name === 'hardBreak') {
+      text += '\n';
     } else if (node.isText) {
       text += node.text;
     }
@@ -529,7 +531,7 @@ function getTextWithResourceURIs(editor: Editor | null): {
  * Hook to create suggestion state with a ref for TipTap access.
  */
 function useSuggestionState<T extends SuggestionItem>(
-  externalItems?: T[],
+  externalItems?: T[]
 ): [SuggestionState<T>, React.MutableRefObject<SuggestionRef<T>>] {
   const [state, setStateInternal] = useState<SuggestionState<T>>({
     isOpen: false,
@@ -561,7 +563,7 @@ function useSuggestionState<T extends SuggestionItem>(
         const previousMaxIndex = Math.max(prev.items.length - 1, 0);
         const safePrevIndex = Math.min(
           Math.max(prev.selectedIndex, 0),
-          previousMaxIndex,
+          previousMaxIndex
         );
 
         const selectedItem = prev.items[safePrevIndex];
@@ -595,7 +597,7 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
       onChange,
       onResourceNamesChange,
       onKeyDown,
-      placeholder = "What do you want to do?",
+      placeholder = 'What do you want to do?',
       disabled = false,
       className,
       onSubmit,
@@ -607,7 +609,7 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
       onResourceSelect,
       onPromptSelect,
     },
-    ref,
+    ref
   ) => {
     // Suggestion states with refs for TipTap access
     const [resourceState, resourceRef] =
@@ -634,34 +636,34 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
     // Stable callbacks for TipTap
     const stableSearchResources = React.useCallback(
       (query: string) => callbacksRef.current.onSearchResources(query),
-      [],
+      []
     );
 
     const stableSearchPrompts = React.useCallback(
       (query: string) => callbacksRef.current.onSearchPrompts(query),
-      [],
+      []
     );
 
     const handleResourceSelect = React.useCallback(
       (item: ResourceItem) => callbacksRef.current.onResourceSelect(item),
-      [],
+      []
     );
 
     const handlePromptSelect = React.useCallback(
       (item: PromptItem) => callbacksRef.current.onPromptSelect(item),
-      [],
+      []
     );
 
     const handleKeyDown = React.useCallback(
       (e: React.KeyboardEvent) => {
-        if (e.key === "Enter" && !e.shiftKey && value.trim()) {
+        if (e.key === 'Enter' && !e.shiftKey && value.trim()) {
           e.preventDefault();
           void onSubmit(e as React.FormEvent);
           return;
         }
         onKeyDown?.(e);
       },
-      [onSubmit, value, onKeyDown],
+      [onSubmit, value, onKeyDown]
     );
 
     const editor = useEditor({
@@ -675,19 +677,19 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
         Mention.configure({
           HTMLAttributes: {
             class:
-              "mention resource inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground",
+              'mention resource inline-flex items-center rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground',
           },
           suggestion: createResourceMentionConfig(
             stableSearchResources,
             handleResourceSelect,
-            resourceRef,
+            resourceRef
           ),
-          renderLabel: ({ node }) => `@${(node.attrs.label as string) ?? ""}`,
+          renderLabel: ({ node }) => `@${(node.attrs.label as string) ?? ''}`,
         }),
         createPromptCommandExtension(
           stableSearchPrompts,
           handlePromptSelect,
-          promptRef,
+          promptRef
         ),
       ],
       content: value,
@@ -704,12 +706,12 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
       editorProps: {
         attributes: {
           class: cn(
-            "tiptap",
-            "prose prose-sm max-w-none focus:outline-none",
-            "p-3 rounded-t-lg bg-transparent text-sm leading-relaxed",
-            "min-h-[82px] max-h-[40vh] overflow-y-auto",
-            "break-words whitespace-pre-wrap",
-            className,
+            'tiptap',
+            'prose prose-sm max-w-none focus:outline-none',
+            'p-3 rounded-t-lg bg-transparent text-sm leading-relaxed',
+            'min-h-[40px] max-h-[40vh] overflow-y-auto',
+            'break-words whitespace-pre-wrap',
+            className
           ),
         },
         handlePaste: (_view, event) => {
@@ -726,7 +728,7 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
               try {
                 await onAddImage(item);
               } catch (error) {
-                console.error("Failed to add pasted image:", error);
+                console.error('Failed to add pasted image:', error);
               }
             }
           })();
@@ -738,7 +740,7 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
 
           if (anyMenuOpen) return false;
 
-          if (event.key === "Enter" && !event.shiftKey && editor) {
+          if (event.key === 'Enter' && !event.shiftKey && editor) {
             const reactEvent = event as unknown as React.KeyboardEvent;
             handleKeyDown(reactEvent);
             return reactEvent.defaultPrevented;
@@ -755,7 +757,7 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
           focus: () => {},
           setContent: () => {},
           appendText: () => {},
-          getTextWithResourceURIs: () => ({ text: "", resourceNames: {} }),
+          getTextWithResourceURIs: () => ({ text: '', resourceNames: {} }),
           hasMention: () => false,
           insertMention: () => {},
           setEditable: () => {},
@@ -763,7 +765,7 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
       }
 
       return {
-        focus: (position?: "start" | "end") => {
+        focus: (position?: 'start' | 'end') => {
           if (position) {
             editor.commands.focus(position);
           } else {
@@ -774,14 +776,14 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
           editor.commands.setContent(content);
         },
         appendText: (text: string) => {
-          editor.chain().focus("end").insertContent(text).run();
+          editor.chain().focus('end').insertContent(text).run();
         },
         getTextWithResourceURIs: () => getTextWithResourceURIs(editor),
         hasMention: (id: string) => {
           if (!editor.state?.doc) return false;
           let exists = false;
           editor.state.doc.descendants((node) => {
-            if (node.type.name === "mention") {
+            if (node.type.name === 'mention') {
               const mentionId = node.attrs.id as string;
               if (mentionId === id) {
                 exists = true;
@@ -797,8 +799,8 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
             .chain()
             .focus()
             .insertContent([
-              { type: "mention", attrs: { id, label } },
-              { type: "text", text: " " },
+              { type: 'mention', attrs: { id, label } },
+              { type: 'text', text: ' ' },
             ])
             .run();
         },
@@ -843,7 +845,7 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
         <EditorContent editor={editor} />
       </div>
     );
-  },
+  }
 );
 
-TextEditor.displayName = "TextEditor";
+TextEditor.displayName = 'TextEditor';

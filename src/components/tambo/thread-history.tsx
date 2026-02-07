@@ -1,12 +1,13 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import React, { useMemo } from 'react';
+
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import {
   type TamboThread,
   useTamboThread,
   useTamboThreadList,
-} from "@tambo-ai/react";
+} from '@tambo-ai/react';
 import {
   ArrowLeftToLine,
   ArrowRightToLine,
@@ -15,8 +16,9 @@ import {
   PlusIcon,
   SearchIcon,
   Sparkles,
-} from "lucide-react";
-import React, { useMemo } from "react";
+} from 'lucide-react';
+
+import { cn } from '@/lib/utils';
 
 /**
  * Context for sharing thread history state and functions
@@ -34,7 +36,7 @@ interface ThreadHistoryContextValue {
   isCollapsed: boolean;
   setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
   onThreadChange?: () => void;
-  position?: "left" | "right";
+  position?: 'left' | 'right';
   updateThreadName: (newName: string, threadId?: string) => Promise<void>;
   generateThreadName: (threadId: string) => Promise<TamboThread>;
 }
@@ -46,7 +48,7 @@ const useThreadHistoryContext = () => {
   const context = React.useContext(ThreadHistoryContext);
   if (!context) {
     throw new Error(
-      "ThreadHistory components must be used within ThreadHistory",
+      'ThreadHistory components must be used within ThreadHistory'
     );
   }
   return context;
@@ -59,7 +61,7 @@ interface ThreadHistoryProps extends React.HTMLAttributes<HTMLDivElement> {
   onThreadChange?: () => void;
   children?: React.ReactNode;
   defaultCollapsed?: boolean;
-  position?: "left" | "right";
+  position?: 'left' | 'right';
 }
 
 const ThreadHistory = React.forwardRef<HTMLDivElement, ThreadHistoryProps>(
@@ -68,13 +70,13 @@ const ThreadHistory = React.forwardRef<HTMLDivElement, ThreadHistoryProps>(
       className,
       onThreadChange,
       defaultCollapsed = true,
-      position = "left",
+      position = 'left',
       children,
       ...props
     },
-    ref,
+    ref
   ) => {
-    const [searchQuery, setSearchQuery] = React.useState("");
+    const [searchQuery, setSearchQuery] = React.useState('');
     const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
     const [shouldFocusSearch, setShouldFocusSearch] = React.useState(false);
 
@@ -90,10 +92,10 @@ const ThreadHistory = React.forwardRef<HTMLDivElement, ThreadHistoryProps>(
 
     // Update CSS variable when sidebar collapses/expands
     React.useEffect(() => {
-      const sidebarWidth = isCollapsed ? "3rem" : "16rem";
+      const sidebarWidth = isCollapsed ? '3rem' : '16rem';
       document.documentElement.style.setProperty(
-        "--sidebar-width",
-        sidebarWidth,
+        '--sidebar-width',
+        sidebarWidth
       );
     }, [isCollapsed]);
 
@@ -136,7 +138,7 @@ const ThreadHistory = React.forwardRef<HTMLDivElement, ThreadHistoryProps>(
         position,
         updateThreadName,
         generateThreadName,
-      ],
+      ]
     );
 
     return (
@@ -146,17 +148,19 @@ const ThreadHistory = React.forwardRef<HTMLDivElement, ThreadHistoryProps>(
         <div
           ref={ref}
           className={cn(
-            "border-flat bg-container h-full transition-all duration-300 flex-none",
-            position === "left" ? "border-r" : "border-l",
-            isCollapsed ? "w-12" : "w-64",
-            className,
+            'border-flat bg-zinc-950 h-full transition-all duration-300 flex-none',
+            position === 'left'
+              ? 'border-r border-zinc-800'
+              : 'border-l border-zinc-800',
+            isCollapsed ? 'w-12' : 'w-64',
+            className
           )}
           {...props}
         >
           <div
             className={cn(
-              "flex flex-col h-full",
-              isCollapsed ? "py-4 px-2" : "p-4",
+              'flex flex-col h-full',
+              isCollapsed ? 'py-4 px-2' : 'p-4'
             )} // py-4 px-2 is for better alignment when isCollapsed
           >
             {children}
@@ -164,9 +168,9 @@ const ThreadHistory = React.forwardRef<HTMLDivElement, ThreadHistoryProps>(
         </div>
       </ThreadHistoryContext.Provider>
     );
-  },
+  }
 );
-ThreadHistory.displayName = "ThreadHistory";
+ThreadHistory.displayName = 'ThreadHistory';
 
 /**
  * Header component with title and collapse toggle
@@ -178,51 +182,51 @@ const ThreadHistoryHeader = React.forwardRef<
   const {
     isCollapsed,
     setIsCollapsed,
-    position = "left",
+    position = 'left',
   } = useThreadHistoryContext();
 
   return (
     <div
       ref={ref}
       className={cn(
-        "flex items-center mb-4 relative",
-        isCollapsed ? "p-1" : "p-1",
-        className,
+        'flex items-center mb-4 relative',
+        isCollapsed ? 'p-1' : 'p-1',
+        className
       )}
       {...props}
     >
       <h2
         className={cn(
-          "text-sm text-muted-foreground whitespace-nowrap ",
+          'text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap ',
           isCollapsed
-            ? "opacity-0 max-w-0 overflow-hidden "
-            : "opacity-100 max-w-none transition-all duration-300 delay-75",
+            ? 'opacity-0 max-w-0 overflow-hidden '
+            : 'opacity-100 max-w-none transition-all duration-300 delay-75'
         )}
       >
-        Tambo Conversations
+        Conversations
       </h2>
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         className={cn(
-          `bg-container p-1 hover:bg-backdrop transition-colors rounded-md cursor-pointer absolute flex items-center justify-center`,
-          position === "left" ? "right-1" : "left-0",
+          `p-1.5 hover:bg-zinc-800 text-slate-400 hover:text-slate-100 transition-colors rounded-md cursor-pointer absolute flex items-center justify-center`,
+          position === 'left' ? 'right-1' : 'left-0'
         )}
-        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         {isCollapsed ? (
           <ArrowRightToLine
-            className={cn("h-4 w-4", position === "right" && "rotate-180")}
+            className={cn('h-4 w-4', position === 'right' && 'rotate-180')}
           />
         ) : (
           <ArrowLeftToLine
-            className={cn("h-4 w-4", position === "right" && "rotate-180")}
+            className={cn('h-4 w-4', position === 'right' && 'rotate-180')}
           />
         )}
       </button>
     </div>
   );
 });
-ThreadHistoryHeader.displayName = "ThreadHistory.Header";
+ThreadHistoryHeader.displayName = 'ThreadHistory.Header';
 
 /**
  * Button to create a new thread
@@ -243,22 +247,22 @@ const ThreadHistoryNewButton = React.forwardRef<
         await refetch();
         onThreadChange?.();
       } catch (error) {
-        console.error("Failed to create new thread:", error);
+        console.error('Failed to create new thread:', error);
       }
     },
-    [startNewThread, refetch, onThreadChange],
+    [startNewThread, refetch, onThreadChange]
   );
 
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.altKey && event.shiftKey && event.key === "n") {
+      if (event.altKey && event.shiftKey && event.key === 'n') {
         event.preventDefault();
         void handleNewThread();
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleNewThread]);
 
   return (
@@ -266,19 +270,19 @@ const ThreadHistoryNewButton = React.forwardRef<
       ref={ref}
       onClick={handleNewThread}
       className={cn(
-        "flex items-center rounded-md mb-4 hover:bg-backdrop transition-colors cursor-pointer relative",
-        isCollapsed ? "p-1 justify-center" : "p-2 gap-2",
+        'flex items-center rounded-md mb-4 hover:bg-zinc-800 transition-colors cursor-pointer relative',
+        isCollapsed ? 'p-1 justify-center' : 'p-2 gap-2'
       )}
       title="New thread"
       {...props}
     >
-      <PlusIcon className="h-4 w-4 bg-green-600 rounded-full text-white" />
+      <PlusIcon className="h-4 w-4 bg-zinc-600 rounded-full text-white shadow-lg shadow-emerald-900/20" />
       <span
         className={cn(
-          "text-sm font-medium whitespace-nowrap absolute left-8 pb-[2px] ",
+          'text-sm font-semibold text-slate-200 whitespace-nowrap absolute left-8 pb-[2px] ',
           isCollapsed
-            ? "opacity-0 max-w-0 overflow-hidden pointer-events-none"
-            : "opacity-100 transition-all duration-300 delay-100",
+            ? 'opacity-0 max-w-0 overflow-hidden pointer-events-none'
+            : 'opacity-100 transition-all duration-300 delay-100'
         )}
       >
         New thread
@@ -286,7 +290,7 @@ const ThreadHistoryNewButton = React.forwardRef<
     </button>
   );
 });
-ThreadHistoryNewButton.displayName = "ThreadHistory.NewButton";
+ThreadHistoryNewButton.displayName = 'ThreadHistory.NewButton';
 
 /**
  * Search input for filtering threads
@@ -309,15 +313,15 @@ const ThreadHistorySearch = React.forwardRef<
   };
 
   return (
-    <div ref={ref} className={cn("mb-4 relative", className)} {...props}>
+    <div ref={ref} className={cn('mb-4 relative', className)} {...props}>
       {/*visible when collapsed */}
       <button
         onClick={expandOnSearch}
         className={cn(
-          "p-1 hover:bg-backdrop rounded-md cursor-pointer absolute left-1/2 -translate-x-1/2",
+          'p-1 hover:bg-backdrop rounded-md cursor-pointer absolute left-1/2 -translate-x-1/2',
           isCollapsed
-            ? "opacity-100 pointer-events-auto transition-all duration-300"
-            : "opacity-0 pointer-events-none",
+            ? 'opacity-100 pointer-events-auto transition-all duration-300'
+            : 'opacity-0 pointer-events-none'
         )}
         title="Search threads"
       >
@@ -330,8 +334,8 @@ const ThreadHistorySearch = React.forwardRef<
         className={cn(
           //using this as wrapper
           isCollapsed
-            ? "opacity-0 pointer-events-none"
-            : "opacity-100 delay-100 transition-all duration-500",
+            ? 'opacity-0 pointer-events-none'
+            : 'opacity-100 delay-100 transition-all duration-500'
         )}
       >
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -340,7 +344,7 @@ const ThreadHistorySearch = React.forwardRef<
         <input
           ref={searchInputRef}
           type="text"
-          className="pl-10 pr-4 py-2 w-full text-sm rounded-md bg-container focus:outline-none"
+          className="pl-10 pr-4 py-2 w-full text-sm rounded-md bg-zinc-900 text-slate-200 border border-zinc-800 focus:outline-none focus:border-zinc-700 transition-colors"
           placeholder="Search..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -349,7 +353,7 @@ const ThreadHistorySearch = React.forwardRef<
     </div>
   );
 });
-ThreadHistorySearch.displayName = "ThreadHistory.Search";
+ThreadHistorySearch.displayName = 'ThreadHistory.Search';
 
 /**
  * List of thread items
@@ -373,9 +377,9 @@ const ThreadHistoryList = React.forwardRef<
   } = useThreadHistoryContext();
 
   const [editingThread, setEditingThread] = React.useState<TamboThread | null>(
-    null,
+    null
   );
-  const [newName, setNewName] = React.useState("");
+  const [newName, setNewName] = React.useState('');
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   // Handle click outside name editing input
@@ -390,9 +394,9 @@ const ThreadHistoryList = React.forwardRef<
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [editingThread]);
 
@@ -407,7 +411,7 @@ const ThreadHistoryList = React.forwardRef<
   }, [editingThread]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") {
+    if (e.key === 'Escape') {
       setEditingThread(null);
     }
   };
@@ -435,13 +439,13 @@ const ThreadHistoryList = React.forwardRef<
       switchCurrentThread(threadId);
       onThreadChange?.();
     } catch (error) {
-      console.error("Failed to switch thread:", error);
+      console.error('Failed to switch thread:', error);
     }
   };
 
   const handleRename = (thread: TamboThread) => {
     setEditingThread(thread);
-    setNewName(thread.name ?? "");
+    setNewName(thread.name ?? '');
   };
 
   const handleGenerateName = async (thread: TamboThread) => {
@@ -449,7 +453,7 @@ const ThreadHistoryList = React.forwardRef<
       await generateThreadName(thread.id);
       await refetch();
     } catch (error) {
-      console.error("Failed to generate name:", error);
+      console.error('Failed to generate name:', error);
     }
   };
 
@@ -462,7 +466,7 @@ const ThreadHistoryList = React.forwardRef<
       await refetch();
       setEditingThread(null);
     } catch (error) {
-      console.error("Failed to rename thread:", error);
+      console.error('Failed to rename thread:', error);
     }
   };
 
@@ -472,7 +476,7 @@ const ThreadHistoryList = React.forwardRef<
     content = (
       <div
         ref={ref}
-        className={cn("text-sm text-muted-foreground p-2", className)}
+        className={cn('text-sm text-muted-foreground p-2', className)}
         {...props}
       >
         Loading threads...
@@ -483,8 +487,8 @@ const ThreadHistoryList = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          `text-sm text-destructive p-2 whitespace-nowrap ${isCollapsed ? "opacity-0 max-w-0 overflow-hidden" : "opacity-100"}`,
-          className,
+          `text-sm text-destructive p-2 whitespace-nowrap ${isCollapsed ? 'opacity-0 max-w-0 overflow-hidden' : 'opacity-100'}`,
+          className
         )}
         {...props}
       >
@@ -496,12 +500,12 @@ const ThreadHistoryList = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          `text-sm text-muted-foreground p-2 whitespace-nowrap ${isCollapsed ? "opacity-0 max-w-0 overflow-hidden" : "opacity-100"}`,
-          className,
+          `text-sm text-muted-foreground p-2 whitespace-nowrap ${isCollapsed ? 'opacity-0 max-w-0 overflow-hidden' : 'opacity-100'}`,
+          className
         )}
         {...props}
       >
-        {searchQuery ? "No matching threads" : "No previous threads"}
+        {searchQuery ? 'No matching threads' : 'No previous threads'}
       </div>
     );
   } else {
@@ -512,12 +516,12 @@ const ThreadHistoryList = React.forwardRef<
             key={thread.id}
             onClick={async () => await handleSwitchThread(thread.id)}
             className={cn(
-              "p-2 rounded-md hover:bg-backdrop cursor-pointer group flex items-center justify-between",
-              currentThread?.id === thread.id ? "bg-muted" : "",
-              editingThread?.id === thread.id ? "bg-muted" : "",
+              'p-2 rounded-md hover:bg-zinc-900 cursor-pointer group flex items-center justify-between transition-colors',
+              currentThread?.id === thread.id ? 'bg-zinc-900' : '',
+              editingThread?.id === thread.id ? 'bg-zinc-900' : ''
             )}
           >
-            <div className="text-sm flex-1">
+            <div className="text-sm flex-1 min-w-0">
               {editingThread?.id === thread.id ? (
                 <form
                   onSubmit={handleNameSubmit}
@@ -535,24 +539,22 @@ const ThreadHistoryList = React.forwardRef<
                   />
                   <p className="text-xs text-muted-foreground truncate">
                     {new Date(thread.createdAt).toLocaleString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "2-digit",
+                      month: 'short',
+                      day: 'numeric',
+                      hour: 'numeric',
+                      minute: '2-digit',
                     })}
                   </p>
                 </form>
               ) : (
                 <>
-                  <span className="font-medium line-clamp-1">
+                  <span className="font-semibold text-slate-300 group-hover:text-slate-100 transition-colors line-clamp-1">
                     {thread.name ?? `Thread ${thread.id.substring(0, 8)}`}
                   </span>
-                  <p className="text-xs text-muted-foreground truncate mt-1">
+                  <p className="text-[10px] uppercase font-bold text-slate-500 truncate mt-0.5">
                     {new Date(thread.createdAt).toLocaleString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "2-digit",
+                      month: 'short',
+                      day: 'numeric',
                     })}
                   </p>
                 </>
@@ -573,11 +575,11 @@ const ThreadHistoryList = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "overflow-y-auto flex-1 transition-all duration-300 ease-in-out",
+        'overflow-y-auto flex-1 transition-all duration-300 ease-in-out',
         isCollapsed
-          ? "opacity-0 max-h-0 overflow-hidden pointer-events-none"
-          : "opacity-100 max-h-full pointer-events-auto",
-        className,
+          ? 'opacity-0 max-h-0 overflow-hidden pointer-events-none'
+          : 'opacity-100 max-h-full pointer-events-auto',
+        className
       )}
       {...props}
     >
@@ -585,7 +587,7 @@ const ThreadHistoryList = React.forwardRef<
     </div>
   );
 });
-ThreadHistoryList.displayName = "ThreadHistory.List";
+ThreadHistoryList.displayName = 'ThreadHistory.List';
 
 /**
  * Dropdown menu component for thread actions
