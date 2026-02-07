@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Bookmark, Search } from 'lucide-react';
 import { Link, Outlet } from 'react-router';
 
