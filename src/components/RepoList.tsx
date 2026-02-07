@@ -1,4 +1,5 @@
-import type { RepoDetails } from '@/tools/github'
+import type { RepoDetails } from '@/tools/github';
+
 import { RepoCard } from './RepoCard';
 
 interface RepoListProps {
@@ -7,7 +8,11 @@ interface RepoListProps {
   onRepoClick: (repo: RepoDetails) => void;
 }
 
-export const RepoList = ({ repos, isLoading, onRepoClick }: RepoListProps) => {
+export const RepoList = ({
+  repos = [],
+  isLoading,
+  onRepoClick,
+}: RepoListProps) => {
   if (isLoading) {
     return (
       <div className="text-center py-20 text-zinc-500 animate-pulse mt-8">
@@ -16,7 +21,7 @@ export const RepoList = ({ repos, isLoading, onRepoClick }: RepoListProps) => {
     );
   }
 
-  if (repos.length === 0) {
+  if (!repos || repos.length === 0) {
     return (
       <div className="text-center py-20 text-zinc-500 mt-8">
         No repositories found matching your criteria.
@@ -35,4 +40,4 @@ export const RepoList = ({ repos, isLoading, onRepoClick }: RepoListProps) => {
       ))}
     </div>
   );
-}
+};
