@@ -19,7 +19,6 @@ export const RepoDetailsSchema = z.object({
 
 export type RepoDetails = z.infer<typeof RepoDetailsSchema>;
 
-// Define RepoSearchItem to match GitHub API response structure
 interface RepoSearchItem {
   full_name: string;
   html_url: string;
@@ -57,7 +56,6 @@ export function buildDiscoveryQuery(query: string, filters: string[]): string {
       }
     });
   } else if (!query || !query.trim()) {
-    // Default helpful filters when no specific query is provided
     const oneYearAgo = new Date();
     oneYearAgo.setDate(oneYearAgo.getDate() - 365);
     const dateStr = oneYearAgo.toISOString().split('T')[0];
@@ -96,10 +94,9 @@ export async function fetchRepos(
     const { data } = await octokit.rest.search.repos({
       q: query,
       per_page: 20, // Fetch top 20 directly
-      sort: query.includes('sort:') ? undefined : 'stars', // Default sort by stars if not specified
+      sort: query.includes('sort:') ? undefined : 'updated',
     });
 
-    // Map search results to RepoDetails
     const repos = (data.items as unknown as RepoSearchItem[]).map(
       (item) =>
         ({
@@ -110,7 +107,7 @@ export async function fetchRepos(
           forks: item.forks_count,
           language: item.language,
           topics: item.topics || [],
-          openBeginnerIssues: 0, // Search API doesn't give this count directly. We'd need a separate call.
+          openBeginnerIssues: 0,
           lastUpdated: item.updated_at,
         }) as RepoDetails
     );
